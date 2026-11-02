@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bellowskv"
+version = "0.1.0.dev0"
+description = "Training-free cross-layer shared-latent KV-cache compression (BellowsKV-A)"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "torch>=2.5",
+    "triton>=3.0",
+    "transformers>=5.0",
+    "datasets>=3.0",
+    "safetensors",
+]
+
+[project.entry-points."vllm.general_plugins"]
+bellowskv = "bellowskv.vllm:plugin"
+
+[tool.setuptools]
+packages = ["bellowskv", "bellowskv.vllm"]
