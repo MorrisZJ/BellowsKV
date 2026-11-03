@@ -60,8 +60,9 @@ def collect_statistics(model, windows, n, stats_device=None, log=print):
         def qhook(m, i, o, l=l):                       # must return None (a returned value replaces the output)
             QE[l].add_((o.detach().float() ** 2).reshape(-1, o.shape[-1]).sum(0).to(sd, torch.float64))
         hooks.append(attn.q_proj.register_forward_hook(qhook))
-    G = {l: torch.zeros(d, d, device=sd) for l in grouped}
-    X = {(g[i], g[j]): torch.zeros(d, d, device=sd) for g in groups for i in range(n) for j in range(i + 1, n)}
+    G = {l: torch.zeros(d, d, device=sd, dtype=torch.float32) for l in grouped}
+    X = {(g[i], g[j]): torch.zeros(d, d, device=sd, dtype=torch.float32)
+         for g in groups for i in range(n) for j in range(i + 1, n)}
     nt = 0
     try:
         for wi, w in enumerate(windows):

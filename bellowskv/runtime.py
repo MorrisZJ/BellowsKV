@@ -110,8 +110,10 @@ class Window:
                 self.K[:, :, start:start + rest] = self.K[:, :, start + m:self.len].clone()
                 self.V[:, :, start:start + rest] = self.V[:, :, start + m:self.len].clone()
             self.len -= m
-        if self.K is not None and self.K.shape[2] > 2 * keep_cap:
-            self._alloc(keep_cap)
+        if self.K is not None:
+            cap = max(keep_cap, _round_up(self.len + 64, 64))     # never below what the window still holds
+            if self.K.shape[2] > 2 * cap:
+                self._alloc(cap)
 
     def view(self):
         return self.K[:, :, :self.len], self.V[:, :, :self.len]

@@ -142,8 +142,14 @@ def _fit_factors(model_id: str, cfg: BellowsConfig, path: str) -> None:
     tok = AutoTokenizer.from_pretrained(model_id)
     hf_model = AutoModelForCausalLM.from_pretrained(model_id, dtype=torch.float16,
                                                     attn_implementation="sdpa").cuda().eval()
-    with torch.no_grad():
-        factors, meta = fit(hf_model, tok, cfg, log=logger.info)
+    # vLLM loads the model under its own default dtype (fp16); the fit needs fp32 accumulators.
+    prev = torch.get_default_dtype()
+    torch.set_default_dtype(torch.float32)
+    try:
+        with torch.no_grad():
+            factors, meta = fit(hf_model, tok, cfg, log=logger.info)
+    finally:
+        torch.set_default_dtype(prev)
     os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
     save_factors(path, factors, meta)
     del hf_model, factors

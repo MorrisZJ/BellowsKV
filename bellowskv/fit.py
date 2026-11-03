@@ -23,7 +23,7 @@ from .calibration import joint_gram
 def _sqrt_and_inv_sqrt(M, ridge):
     """Symmetric square root and inverse square root of M + ridge * mean(diag) * I."""
     M = .5 * (M + M.T); rr = M.diagonal().mean().clamp_min(1e-8)
-    w, Q = torch.linalg.eigh(M + torch.eye(M.shape[0], device=M.device) * ridge * rr)
+    w, Q = torch.linalg.eigh(M + torch.eye(M.shape[0], device=M.device, dtype=M.dtype) * ridge * rr)
     ws = w.clamp_min(1e-8).sqrt()
     return (Q * ws) @ Q.T, (Q * (1 / ws)) @ Q.T
 
@@ -83,7 +83,8 @@ def fit_group(model, stats, grp, r_k, r_v, ridge=1e-3, log=print):
     ranks = _greedy_ranks([s * w[i] for i, s in enumerate(spectra)], r_k // 2)
 
     Gic = Gi.to(torch.complex64); del Gi
-    WdK = torch.zeros(n * d, r_k, device=dev); WuK = torch.zeros(r_k, n * kv, device=dev)
+    WdK = torch.zeros(n * d, r_k, device=dev, dtype=torch.float32)
+    WuK = torch.zeros(r_k, n * kv, device=dev, dtype=torch.float32)
     col = 0
     for i, (U, S, Vh) in enumerate(svds):
         r = ranks[i]

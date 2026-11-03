@@ -215,7 +215,7 @@ throughput.
 | | 🤗 Transformers | vLLM 0.29 |
 |---|---|---|
 | Llama 3.x (validated on Llama-3.1-8B-Instruct) | ✅ | ✅ |
-| Mistral (paper: Mistral-7B-Instruct-v0.3) | experimental | planned |
+| Mistral (validated on Mistral-7B-Instruct-v0.3) | ✅ | planned |
 | Qwen2 / Qwen2.5 (k/v biases), QK-norm models (Qwen3) | planned | planned |
 
 Current limits:
