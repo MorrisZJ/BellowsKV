@@ -10,6 +10,7 @@ Training-free cross-layer KV-cache compression for 🤗 Transformers and vLLM.
 [![vLLM](https://img.shields.io/badge/vLLM-0.29-30a2ff.svg)](#serving-with-vllm)
 [![Transformers](https://img.shields.io/badge/transformers-%E2%89%A55.0-ffcc4d.svg)](#huggingface-transformers)
 [![Python](https://img.shields.io/badge/python-%E2%89%A53.10-3776ab.svg)](#installation)
+[![License](https://img.shields.io/badge/license-Apache--2.0-green.svg)](LICENSE)
 
 [Paper](https://arxiv.org/abs/2610.35023) · [Quick start](#quick-start) · [Serving with vLLM](#serving-with-vllm) · [How it works](#how-it-works) · [Results](#results) · [TODO](#todo) · [Citation](#citation)
 
@@ -268,7 +269,7 @@ python tests/vllm_parity.py --help    # vLLM vs 🤗 Transformers, token by toke
 
 ## License
 
-To be announced.
+BellowsKV is released under the [Apache License 2.0](LICENSE).
 
 ## Acknowledgements
 
