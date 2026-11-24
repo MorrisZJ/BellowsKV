@@ -45,6 +45,13 @@ def register() -> None:
 
 
 def plugin() -> None:
-    """vllm.general_plugins entry point: a no-op unless BELLOWSKV_VLLM=1."""
+    """vllm.general_plugins entry point. Always registers the BellowsKV-Flash architecture (it only adds a name,
+    selected with --hf-overrides); BellowsKV-A (which rebinds LlamaForCausalLM) only with BELLOWSKV_VLLM=1."""
+    try:
+        from bellowskv.flash.vllm import register as register_flash
+        register_flash()
+    except Exception as e:  # noqa: BLE001  never break vLLM for other models
+        import logging
+        logging.getLogger("vllm.bellowskv").warning("BellowsKV-Flash plugin not registered: %r", e)
     if os.environ.get("BELLOWSKV_VLLM", "0") == "1":
         register()

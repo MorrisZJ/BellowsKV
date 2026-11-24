@@ -17,11 +17,11 @@ CODE_SOURCES = (
 )
 
 
-def calibration_windows(tok, seq=2048, nwin=32, code_frac=0.5, log=print):
+def calibration_windows(tok, seq=2048, nwin=32, code_frac=0.5, log=print, sources=CODE_SOURCES):
     from datasets import load_dataset
     nl = "\n\n".join(t for t in load_dataset("Salesforce/wikitext", "wikitext-2-raw-v1", split="train")["text"] if t.strip())
     code, src = "", None
-    for name, kw, col, k in CODE_SOURCES:
+    for name, kw, col, k in sources:
         try:
             ds = load_dataset(name, **kw)
             code = "\n\n".join(str(x) for x in ds[:k][col]); src = name

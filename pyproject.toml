@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bellowskv"
-version = "0.1.0.dev0"
-description = "Training-free cross-layer shared-latent KV-cache compression (BellowsKV-A)"
+version = "0.2.0"
+description = "Cross-layer shared-latent KV-cache compression for Transformers and vLLM (BellowsKV-Flash, BellowsKV-A)"
 readme = "README.md"
 license = "Apache-2.0"
 license-files = ["LICENSE"]
@@ -18,8 +18,17 @@ dependencies = [
     "safetensors",
 ]
 
+[project.optional-dependencies]
+# BellowsKV-Flash fast path (FlashMLA + vLLM kernels), the decode engine and the vLLM plugin
+vllm = ["vllm==0.29.*"]
+# `bellowskv-flash eval` (LongBench metrics, as the Protocol-B harness computes them)
+eval = ["rouge==1.0.1", "rapidfuzz>=3.0"]
+
+[project.scripts]
+bellowskv-flash = "bellowskv.flash.cli:main"
+
 [project.entry-points."vllm.general_plugins"]
 bellowskv = "bellowskv.vllm:plugin"
 
 [tool.setuptools]
-packages = ["bellowskv", "bellowskv.vllm"]
+packages = ["bellowskv", "bellowskv.vllm", "bellowskv.flash", "bellowskv.flash.vllm"]
