@@ -2,12 +2,12 @@
 """Long-context question answering with BellowsKV-A under HuggingFace transformers.
 
 A needle (a passcode) is hidden in a long document; the model is asked for it. The script prints the answer,
-the KV-cache memory held (compressed latents + exact windows) against what a dense fp16 cache would hold, and the
-decode speed. `--compare-dense` runs the same prompt with the stock dense cache first.
+the KV-cache memory held (compressed latents + exact windows) against what a dense fp16 cache would hold.
+`--compare-dense` runs the same prompt with the stock dense cache first.
 
     python examples/hf_demo.py --model NousResearch/Meta-Llama-3.1-8B-Instruct --context 32000 --compare-dense
 """
-import argparse, os, sys, time
+import argparse, os, sys
 
 import torch
 
@@ -44,12 +44,11 @@ print(f"prompt: {n_prompt} tokens, needle at {a.depth:.0%}")
 
 def run(label, **kw):
     torch.cuda.synchronize(); torch.cuda.reset_peak_memory_stats()
-    t0 = time.time()
     out = model.generate(**inputs, max_new_tokens=a.max_new_tokens, do_sample=False, return_dict_in_generate=True, **kw)
-    torch.cuda.synchronize(); dt = time.time() - t0
+    torch.cuda.synchronize()
     new = out.sequences[0, n_prompt:]
     print(f"\n[{label}] answer: {tok.decode(new, skip_special_tokens=True).strip()!r}")
-    print(f"[{label}] {len(new)} tokens in {dt:.1f}s (prefill included); peak GPU memory {torch.cuda.max_memory_allocated() / 2**30:.1f} GiB")
+    print(f"[{label}] peak GPU memory {torch.cuda.max_memory_allocated() / 2**30:.1f} GiB")
     return out
 
 

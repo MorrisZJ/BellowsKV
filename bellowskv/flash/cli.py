@@ -5,6 +5,7 @@
   bellowskv-flash turbo ...     Turbo stage, under torchrun for several GPUs (python -m bellowskv.flash.turbo)
   bellowskv-flash bench decode  end-to-end decode speed: needle gate, then step time over context x batch x variant
   bellowskv-flash bench serve   vLLM serving throughput, dense vs Flash at one GPU memory budget
+  bellowskv-flash bench vllm-decode   vLLM steady-state decode throughput at a fixed batch and context (Qwen3.5 too)
   bellowskv-flash eval ...      LongBench Protocol-B (32K): flash and dense on one backend, scores, retention
                                 (python -m bellowskv.flash.evaluate; needs pip install 'bellowskv[eval]')
 """
@@ -90,8 +91,11 @@ def main(argv=None):
         if rest[:1] == ["serve"]:
             from .bench_serve import main as serve_main
             return serve_main(rest[1:])
-        print("usage: bellowskv-flash bench decode|serve [--help]   (end-to-end decode step time | vLLM serving "
-              "throughput at one memory budget)")
+        if rest[:1] == ["vllm-decode"]:
+            from .bench_vllm_decode import main as vd_main
+            return vd_main(rest[1:])
+        print("usage: bellowskv-flash bench decode|serve|vllm-decode [--help]   (engine decode step time | vLLM serving "
+              "throughput at one memory budget | vLLM decode throughput at a fixed batch)")
         return 2
     if cmd == "convert":
         from .convert import main as m

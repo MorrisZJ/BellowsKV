@@ -12,5 +12,5 @@ from .config import BellowsConfig
 from .api import enable, disable, fit
 from .runtime import BellowsCache
 
-__version__ = "0.1.0.dev0"
+__version__ = "0.3.0"
 __all__ = ["BellowsConfig", "enable", "disable", "fit", "BellowsCache", "__version__"]

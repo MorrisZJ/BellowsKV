@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "bellowskv"
-version = "0.2.0"
+version = "0.3.0"
 description = "Cross-layer shared-latent KV-cache compression for Transformers and vLLM (BellowsKV-Flash, BellowsKV-A)"
 readme = "README.md"
 license = "Apache-2.0"

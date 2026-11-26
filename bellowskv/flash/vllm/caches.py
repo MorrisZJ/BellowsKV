@@ -1,4 +1,4 @@
-"""The caches of BellowsKV-Flash in vLLM 0.29: per block of n = 2 layers one FlashMLA record, per layer one exact window.
+"""The caches of BellowsKV-Flash in vLLM 0.29: per block of n layers (n = 2) one FlashMLA record, per layer one exact window.
 
   RecordCache (one per block): FullAttentionSpec, 64-token pages of R + r = 576 B per token (512 latent + 64 RoPE dims
       in fp8; declared bf16 so every cache group has one dtype, and re-viewed as fp8). FlashMLA reads it through the
@@ -290,6 +290,7 @@ class WindowCache(nn.Module, AttentionLayerBase):
             self.k = self.v = self.k_cache = self.v_cache = None
             return
         D, nb = self.head_size, kv_cache.shape[0]
+        self.capacity = kv_cache.shape[2]                         # a hybrid model's allocator may scale the ring block up
         bnhc = kv_cache.transpose(1, 2)                           # (blocks, capacity, HKV, 2 D)
         assert bnhc.stride(3) == 1 and bnhc.stride(2) == 2 * D, bnhc.stride()
         assert bnhc.stride(1) == self.num_kv_heads * 2 * D and bnhc.stride(0) == self.capacity * bnhc.stride(1), \
