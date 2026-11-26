@@ -2,7 +2,7 @@
 """BellowsKV-Flash on Qwen3.5 in vLLM 0.29 against dense vLLM: a pass key hidden in a ~28K-token document, and a short
 chat. Each run is its own vLLM engine (a subprocess, one after the other on one GPU). Exits 1 if Flash misses the key.
 
-    python tests/check_flash_qwen35.py --params morriszjm/Qwen3.5-9B-BellowsKV-Flash [--model Qwen/Qwen3.5-9B]
+    python tests/check_flash_qwen35.py --params morriszjm/Qwen3.5-9B-BellowsKV-Flash-Lite [--model Qwen/Qwen3.5-9B]
 """
 import argparse
 import json

@@ -87,7 +87,7 @@ one softmax. Nothing is reconstructed.
 |---|---|---|
 | [Llama-3.1-8B-Instruct-BellowsKV-Flash-Lite](https://huggingface.co/morriszjm/Llama-3.1-8B-Instruct-BellowsKV-Flash-Lite) | closed-form init + block-wise distillation, 1.8 H100 GPU hours | 93.5 / 93.2 |
 | [Llama-3.1-8B-Instruct-BellowsKV-Flash-Turbo](https://huggingface.co/morriszjm/Llama-3.1-8B-Instruct-BellowsKV-Flash-Turbo) | Lite + on-policy distillation, 1.2 more GPU hours | 95.3 / 95.1 |
-| [Qwen3.5-9B-BellowsKV-Flash](https://huggingface.co/morriszjm/Qwen3.5-9B-BellowsKV-Flash) | closed-form init + block-wise distillation (the Lite recipe), 0.3 H100 GPU hours | 99.0 (reference) / — |
+| [Qwen3.5-9B-BellowsKV-Flash-Lite](https://huggingface.co/morriszjm/Qwen3.5-9B-BellowsKV-Flash-Lite) | closed-form init + block-wise distillation, 0.3 H100 GPU hours | 99.0 (reference) / — |
 
 The two Llama models use the base model [meta-llama/Llama-3.1-8B-Instruct](https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct)
 (accept its license on the Hub first) and the same deploy config, so they have the same speed. Built with Llama. The
@@ -139,7 +139,7 @@ Only the 8 full-attention layers change; the Gated DeltaNet layers and their sta
 PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True vllm serve Qwen/Qwen3.5-9B --language-model-only \
     --block-size 540 --max-model-len 131072 \
     --no-enable-prefix-caching --no-enable-chunked-prefill --max-num-batched-tokens 131072 \
-    --hf-overrides '{"bellowskv_flash": "morriszjm/Qwen3.5-9B-BellowsKV-Flash"}'
+    --hf-overrides '{"bellowskv_flash": "morriszjm/Qwen3.5-9B-BellowsKV-Flash-Lite"}'
 ```
 
 **Prefill: use exact prefill.** With `--no-enable-chunked-prefill` and `--max-num-batched-tokens` at least the
@@ -182,7 +182,7 @@ torchrun --nproc_per_node 4 -m bellowskv.flash.turbo --init flash-lite --prompts
 Qwen3.5-9B, speed in vLLM:
 
 ```bash
-P=morriszjm/Qwen3.5-9B-BellowsKV-Flash
+P=morriszjm/Qwen3.5-9B-BellowsKV-Flash-Lite
 Q=Qwen/Qwen3.5-9B
 
 # decode throughput at a fixed batch, dense (GPU 0) and Flash (GPU 1), at 32K and 128K context
@@ -395,7 +395,7 @@ python tests/test_flash_kernels.py        # Triton kernels vs PyTorch
 python tests/test_longbench_metrics.py    # LongBench metrics on hand-computed cases
 python tests/test_flash_student.py        # conversion: student attention vs exact attention
 python tests/check_flash_short.py --params morriszjm/Llama-3.1-8B-Instruct-BellowsKV-Flash-Turbo   # short prompts vs dense
-python tests/check_flash_qwen35.py --params morriszjm/Qwen3.5-9B-BellowsKV-Flash                    # Qwen3.5 in vLLM vs dense
+python tests/check_flash_qwen35.py --params morriszjm/Qwen3.5-9B-BellowsKV-Flash-Lite               # Qwen3.5 in vLLM vs dense
 # BellowsKV-A
 python tests/check_equivalence.py         # Triton kernels vs the PyTorch reference of the same math
 python tests/check_paths.py               # batches, multi-turn chats, 1,000-token generations
